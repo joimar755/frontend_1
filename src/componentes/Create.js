@@ -6,18 +6,31 @@ import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
 import { Link } from "react-router-dom";
+import PersonIcon from "@mui/icons-material/Person";
+import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
+import RemoveModeratorIcon from "@mui/icons-material/RemoveModerator";
+import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 
+import { Box, Typography, useTheme } from "@mui/material";
 export const Create = () => {
-  const [characters, setCharacters] = useState([]);
+  const [formState, setFormState] = useState([
+    (name = ""),
+    (last_name = ""),
+    (sex = ""),
+    (role = ""),
+    (email = ""),
+    (password = ""),
+  ]);
   const [users, setUsers] = useState([]);
   useEffect(() => {
     const obtenerUSers = async () => {
-    const url = await axios.get("http://127.0.0.1:8000/listausers");
-    const resultado = url
-    setUsers(resultado.data.resultado)  
+      const url = await axios.get("http://127.0.0.1:8000/listausers");
+      const resultado = url;
+      setUsers(resultado.data.resultado);
     };
-    obtenerUSers()
+    obtenerUSers();
   }, []);
+
   console.log(users);
   return (
     <>
@@ -75,8 +88,8 @@ export const Create = () => {
               <Col sm="10">
                 <Form.Select aria-label="Default select example">
                   <option>Rol</option>
-                  <option value="1"></option>
-                  <option value="2"></option>
+                  <option value="students">Students</option>
+                  <option value="user"></option>
                 </Form.Select>
               </Col>
 
@@ -106,12 +119,12 @@ export const Create = () => {
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>correo</th>
+                <th>Roles</th>
                 <th>editar</th>
                 <th>eliminar</th>
               </tr>
             </thead>
             <tbody>
-                
               {users.map((element) => {
                 return (
                   <tr key={element.id}>
@@ -119,6 +132,26 @@ export const Create = () => {
                     <td>{element.name}</td>
                     <td>{element.last_name}</td>
                     <td>{element.email}</td>
+                    <td>
+                      {element.role === "Students" ? (
+                        <Box>
+                          <PersonIcon />
+                          Students
+                        </Box>
+                      ) : element.role === "Admin" ? (
+                        <Box>
+                          <SecurityOutlinedIcon />
+                          Administrador
+                        </Box>
+                      ) : element.role === "Monitor" ? (
+                        <Box>
+                          <AdminPanelSettingsOutlinedIcon />
+                          Monitor
+                        </Box>
+                      ) : (
+                        <RemoveModeratorIcon />
+                      )}
+                    </td>
                     <td>
                       <Link to={"/Update/:id"}>
                         <button className="btn btn-warning">Editar</button>
